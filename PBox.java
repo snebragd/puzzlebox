@@ -64,16 +64,7 @@ public class PBox {
 			    for(int l=0; l<p.getLayers() && !fail; l++) {
 				for(int r=0; r<p.getRows() && !fail; r++) {
 				    for(int c=0; c<p.getCols() &&!fail; c++) {
-					int tmp;
-					try {
-					    tmp = p.get(c,r,l);
-					}
-					catch(ArrayIndexOutOfBoundsException e) {
-					    System.out.println("\nn:"+n+ " t:"+t+"c:"+c+" r:"+r+" l:"+l);
-					    System.out.println("dim:"+p.getCols()+","+p.getRows()+","+p.getLayers());
-					    throw e;
-					}
-					if(tmp > 0) {					    					    
+					if(p.get(c,r,l) > 0) {					    					    
 					    if(get(c+cAdd,r+rAdd,l+lAdd) > 0) {
 						fail=true;						
 					    }
