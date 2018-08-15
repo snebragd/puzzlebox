@@ -1,17 +1,15 @@
+import java.util.LinkedList;
 
-public class PBox {
+public class PBox {    
+    private static int SIZE=3;
     
-    private static final int SIZE = 3;
-    private static final int PIECES = 6;
-    private static final int MAXSOL = 100;
     
     static int box[] = new int[SIZE*SIZE*SIZE];
-    static int savedBox[][] = new int[PIECES][SIZE*SIZE*SIZE];
+    static int savedBox[][];
 
-    static PPiece pieces[] = new PPiece[PIECES];
+    static PPiece pieces[];
 
-    static int solutions[][] = new int[MAXSOL][SIZE*SIZE*SIZE];
-    static int nSolutions = 0;
+    static LinkedList<int []> solutions = new LinkedList<int []>();
 
     /*
      * Pieces enetered as array, row by row, starting from bottommost layer.
@@ -19,24 +17,38 @@ public class PBox {
      *     A 3D plus would be: {0,0,0, 0,1,0, 0,0,0,   0,1,0, 1,1,1, 0,1,0,   0,0,0, 0,1,0, 0,0,0} (3 cols,, 3 rows, 3 layers) 
      */
     static {
-	int p1[] = {1,1,1, 1,0,0};
-	pieces[0] = new PPiece(3, 2, 1, p1);
+	//original puzzle, 6 solutions
+	String puzzleString =
+	    "  1,1,1 - 1,0,0" +
+	    "P  1,1,1 - 0,0,1 # 0,1,0 - 0,0,0" +
+	    "P  1,1,1 - 0,0,0 # 1,0,0 - 1,0,0" +
+	    "P  1,1 - 0,0 # 0,1 - 0,1" +
+	    "P  1,1 - 0,0 # 1,0 - 1,0" +
+	    "P  1,1,0 - 0,1,0 # 0,0,0 - 0,1,1";
+	
+	/*
+	//seven piece puzzle, 1372 solutions 
+	String puzzleString =
+	    "  0,1,1 - 1,1,0" + 
+	    "P 1,1 - 0,1 - 0,1" +
+	    "P 1,0 - 1,1 # 0,0 - 0,1" +
+	    "P 0,1 - 1,1 # 0,0 - 1,0" +
+	    "P 0,1 - 1,1 # 0,0 - 1,0" +
+	    "P 1,1,1 - 0,1,0" +
+	    "P 1,0 - 1,1";
+	*/
+	
+	String[] pieceStrings = puzzleString.split("[P]+");
+	pieces = new PPiece[pieceStrings.length];
 
-	int p2[] = {1,1,1, 0,0,1,   0,1,0, 0,0,0};
-	pieces[1] = new PPiece(3, 2, 2, p2);
+	System.out.println("Solving puzzle with "+pieces.length+" pieces");
 	
-    	int p3[] = {1,1,1, 0,0,0,   1,0,0, 1,0,0};
-	pieces[2] = new PPiece(3, 2, 2, p3);
-	
-	int p4[] = {1,1, 0,0,   0,1, 0,1};
-	pieces[3] = new PPiece(2, 2, 2, p4);
-		
-	int p5[] = {1,1, 0,0,   1,0, 1,0};
-	pieces[4] = new PPiece(2, 2, 2, p5);
-	
-	int p6[] = {1,1,0, 0,1,0,   0,0,0, 0,1,1};
-	pieces[5] = new PPiece(3, 2, 2, p6);
-	
+	int n=0;
+	for(String piece : pieceStrings) {
+	    System.out.println("Piece "+(n+1)+": "+piece);
+	    pieces[n++] = new PPiece(piece);
+    	}
+	savedBox = new int[pieces.length][SIZE*SIZE*SIZE];
     }
 
     public static int get(int col, int row, int layer) {
@@ -76,7 +88,7 @@ public class PBox {
 				}
 			    }
 			    if(!fail) {				
-				if(n == PIECES-1) {
+				if(n == pieces.length-1) {
 				    //complete solution!
 				    newSolution(); //post solution to be printed if unique, then search on for more solutions
 				}
@@ -100,19 +112,20 @@ public class PBox {
 
     private static void newSolution() {
 	boolean found = false;
-	for(int s=0 ; s<nSolutions ; s++) {
-	    if(java.util.Arrays.equals(box, solutions[s])) {
+
+	
+	for(int[] sol : solutions) {
+	    if(java.util.Arrays.equals(box, sol)) {
 		found = true;
 		break;
 	    }
 	}
 	if(!found) {
 	    //add new solution
-	    System.arraycopy(box, 0, solutions[nSolutions++], 0, SIZE*SIZE*SIZE);
-
+	    solutions.add(box.clone());
 
 	    //print it
-	    System.out.println("Solution "+nSolutions);				    
+	    System.out.println("Solution "+solutions.size());				    
 	    for(int i=0 ; i<SIZE ;i++) {
 		System.out.print("L" + i + "\t");	
 	    }
@@ -134,7 +147,7 @@ public class PBox {
 
 	placePiece(0);
 
-	if(nSolutions < 1) {
+	if(solutions.size() < 1) {
 	    System.out.println("Failed to lay puzzle! :-(");
 	}	
     }

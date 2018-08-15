@@ -198,6 +198,27 @@ class PPiece {
 
 	}		
     }
+
+    PPiece(String piece) {	
+	String[] layStrings = piece.split("[#]+");
+	layers = layStrings.length;
+	for(int layer=0 ; layer < layStrings.length ; layer++) {
+	    String[] rowStrings = layStrings[layer].split("[-]+");
+	    rows = rowStrings.length;
+	    for(int row=0; row < rowStrings.length ; row++) {
+		String[] colStrings = rowStrings[row].split("[,]+");
+		cols = colStrings.length;
+		if(shapeArr == null) {
+		    shapeArr = new int[cols][rows][layers];
+		}		   
+		for(int col=0 ; col < colStrings.length ; col++) {		    		   
+		    shapeArr[col][row][layer] = Integer.parseInt(colStrings[col].trim());
+		}
+	    }
+	}
+	System.out.println("  dim = "+cols+","+rows+","+layers);
+    }
+
     
     PPiece(int p_cols, int p_rows, int p_layers, int p_shape[]) {
 	cols = p_cols;
