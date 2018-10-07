@@ -2,12 +2,12 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 
 public class PBox {    
-    private static int CSIZE=4;
-    private static int RSIZE=3;
-    private static int LSIZE=3;
+    private static int CSIZE=0;
+    private static int RSIZE=0;
+    private static int LSIZE=0;
     
     
-    static int box[] = new int[CSIZE*RSIZE*LSIZE];
+    static int box[];
     static int savedBox[][];
 
     static ArrayList<PPiece> pieces = new ArrayList<PPiece>();
@@ -16,31 +16,12 @@ public class PBox {
 
     static int MIN_SIZE=100;
     
-	/*
-	//13 piece 4x4x4
-	// http://www.2ndlook.nl/3dpuzzles/puzzles/bedlamcube/engdescription.htm
-	String puzzleString =
-	    "  0,1,0 # 1,1,1 # 0,0,1" +
-	    "P 0,1,0 # 1,1,1 # 0,1,0 " +
-	    "P 0,1,1 # 1,1,0 # 1,0,0 " +
-	    "P 0,0 - 0,1 # 0,0 - 1,1 # 1,0 - 1,0 " +
-	    "P 0,0 - 1,0 # 1,0 - 1,1 # 0,0 - 1,0" +
-	    "P 0,0 - 0,1 # 1,0 - 1,1 # 0,0 - 1,0 " +
-	    "P 0,0 - 1,0 # 1,1 - 1,0 # 0,0 - 1,0 " +
-	    "P 1,0 - 1,1 # 0,0 - 1,0 # 0,0 - 1,0 " +
-	    "P 0,0 - 1,1 # 0,0 - 1,0 # 1,0 - 1,0 " +
-	    "P 0,0 - 1,0 # 0,0 - 1,0 # 0,1 - 1,1 " +
-	    "P 0,0 - 0,1 # 1,0 - 1,1 # 1,0 - 0,0 " +
-	    "P 0,0 - 1,1 # 1,0 - 1,0 # 0,0 - 1,0 " +	    
-	    "P 0,1 - 1,1 # 0,0 - 1,0 ";	    		
-	*/	
-    
     private static boolean parsePuzzle(String fname) {
-	//	java.util.LinkedList<String> piecesStrings = new java.util.LinkedList<String>();
+	int totWeight = 0;
+	
 	try {
 	    java.io.BufferedReader in = new java.io.BufferedReader(new java.io.FileReader(fname));
-	    //	String[] lines = pStr.split("\n");
-	    
+		    
 	    boolean gotDim = false;
 	    boolean newPiece = false;
 	    StringBuffer pStrBuf = null;
@@ -81,6 +62,8 @@ public class PBox {
 			PPiece p = new PPiece(piece, name);
 			MIN_SIZE = Math.min(p.getWeight(), MIN_SIZE);
 			pieces.add(p);	    
+
+			totWeight += p.getWeight();
 			
 			pStrBuf = null;
 			name = null;
@@ -105,10 +88,15 @@ public class PBox {
 	    return false;
 	}
 
-	System.out.println("Solving "+CSIZE+"x"+RSIZE+"x"+LSIZE+" puzzle with "+pieces.size()+" pieces");	
+	System.out.println("Solving "+CSIZE+"x"+RSIZE+"x"+LSIZE+" puzzle with "+pieces.size()+" pieces");
+	if(totWeight != CSIZE*RSIZE*LSIZE) {
+	    System.out.println("Mismatching pieces! Weight is "+totWeight+" while is should be "+ CSIZE*RSIZE*LSIZE);
+	    return false;
+	}
 	
 	savedBox = new int[pieces.size()][CSIZE*RSIZE*LSIZE];
-	
+	isobox = new int[CSIZE*RSIZE*LSIZE];
+	box = new int[CSIZE*RSIZE*LSIZE];	
 	return true;
     }
     
@@ -122,7 +110,7 @@ public class PBox {
     }
 
 
-    static int isobox[] = new int[CSIZE*RSIZE*LSIZE];
+    static int isobox[];
     static int found;    
     public static int measure(int pc, int pr, int pl) {
 	//	System.out.println(pc+","+pr+","+pl+" f="+found);
