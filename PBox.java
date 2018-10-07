@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class PBox {    
     private static int CSIZE=4;
@@ -9,79 +10,12 @@ public class PBox {
     static int box[] = new int[CSIZE*RSIZE*LSIZE];
     static int savedBox[][];
 
-    static PPiece pieces[];
+    static ArrayList<PPiece> pieces = new ArrayList<PPiece>();
 
     static LinkedList<int []> solutions = new LinkedList<int []>();
 
-    /*
-     * Pieces enetered as array, row by row, starting from bottommost layer.
-     * Eg. The letter 'L' would look like: {1,1, 1,0, 1,0} (2 cols, 3 rows, 1 layer)
-     *     A 3D plus would be: {0,0,0, 0,1,0, 0,0,0,   0,1,0, 1,1,1, 0,1,0,   0,0,0, 0,1,0, 0,0,0} (3 cols,, 3 rows, 3 layers) 
-     */
-    static {
-	/*
-	//original puzzle, 6 solutions
-	  String puzzleString =
-	    "  1,1,1 - 1,0,0" +
-	    "P  1,1,1 - 0,0,1 # 0,1,0 - 0,0,0" +
-	    "P  1,1,1 - 0,0,0 # 1,0,0 - 1,0,0" +
-	    "P  1,1 - 0,0 # 0,1 - 0,1" +
-	    "P  1,1 - 0,0 # 1,0 - 1,0" +
-	    "P  1,1,0 - 0,1,0 # 0,0,0 - 0,1,1";
-	
-	//six piece, 4 solutions
-	String puzzleString =
-	    "  1,1,1 - 0,0,0 # 0,1,0 - 0,1,0" +
-	    "P  1,1,1 # 0,1,0" +
-	    "P  1,0,0 - 1,1,1 # 0,0,0 - 0,1,0" +
-	    "P  0,1 - 1,1 # 0,0 - 1,0" +
-	    "P  1,1,1 # 1,0,0" +
-	    "P  1,0 - 1,1 - 0,1 # 0,0 - 1,0 - 0,0";
-
-
- 	//six piece, 1 solution
-	//https://knolleary.net/2006/10/04/ruby-cubes/
-	String puzzleString =
-	    "  1,1,1 - 0,0,0 # 0,1,0 - 0,1,0" +
-	    "P  1,1,1 # 0,1,0" +
-	    "P  0,0,1 - 1,1,1 # 0,0,0 - 0,1,0" +
-	    "P  1,0 - 1,1 # 0,0 - 0,1" +
-	    "P  1,1,1 # 1,0,0" +
-	    "P  1,0 - 1,1 - 0,1 # 0,0 - 1,0 - 0,0";
-
-	//six piece, 78 sol
-	String puzzleString =
-	    "  1,1,1 # 0,0,0" +
-	    "P  1,1,1 - 0,0,1 # 0,0,1 - 0,0,0" +
-	    "P  0,0,1 - 1,1,1 # 0,0,0 - 0,1,0" +
-	    "P  1,0 - 1,0 - 1,1 # 0,0 - 0,0 - 0,1" +
-	    "P  1,1,1 # 1,0,0" +
-	    "P  1,0 - 1,1 - 0,1 # 0,0 - 1,0 - 0,0";
-
-
-	//six piece, 100 sol
-	String puzzleString =
-	    "  1,1 - 1,0" +
-	    "P  1,1,1 - 0,0,1 # 0,0,1 - 0,0,0" +
-	    "P  0,0,1 - 1,1,1 # 0,0,0 - 0,1,0" +
-	    "P  1,0 - 1,0 - 1,1 # 0,0 - 0,0 - 0,1" +
-	    "P  1,1,1 # 1,0,0" +
-	    "P  1,0 - 1,1 - 0,1 # 0,0 - 1,0 - 0,0";
-	*/	
-
-
-	// 6/8 piece 3x3x3/4 100/524 sol
-	String puzzleString =
-	    "  1,1 - 1,0" +
-	    "P  1,1,1 - 0,0,1 # 0,0,1 - 0,0,0" +
-	    "P  0,0,1 - 1,1,1 # 0,0,0 - 0,1,0" +
-	    "P  1,0 - 1,0 - 1,1 # 0,0 - 0,0 - 0,1" +
-	    "P  1,1,1 # 1,0,0" +	    
-	    "P  1,0 - 1,1 - 0,1 # 0,0 - 1,0 - 0,0" +
-	    "P  1,1,1,1 " + //only for 3x3x4
-	    "P  0,0,1,0 - 1,1,1,1" ; //only for 3x3x4
-
-	
+    static int MIN_SIZE=100;
+    
 	/*
 	//13 piece 4x4x4
 	// http://www.2ndlook.nl/3dpuzzles/puzzles/bedlamcube/engdescription.htm
@@ -98,44 +32,87 @@ public class PBox {
 	    "P 0,0 - 1,0 # 0,0 - 1,0 # 0,1 - 1,1 " +
 	    "P 0,0 - 0,1 # 1,0 - 1,1 # 1,0 - 0,0 " +
 	    "P 0,0 - 1,1 # 1,0 - 1,0 # 0,0 - 1,0 " +	    
-	    "P 0,1 - 1,1 # 0,0 - 1,0 ";
-
-	    
-		
-	//six piece, 2 solutions
-	String puzzleString =
-	    "  1,1,1 - 1,0,0" +
-	    "P  1,1,1 - 0,0,1 # 0,1,0 - 0,0,0" +
-	    "P  1,1,1 - 0,0,0 # 1,0,0 - 1,0,0" +
-	    "P  1,1 - 0,0 # 0,1 - 0,1" +
-	    "P  1,1 - 1,0 # 1,0 - 0,0" +
-	    "P  1,1,0 - 0,1,0 # 0,0,0 - 0,1,1";
-
-
-	//seven piece puzzle, 960 solutions 
-	String puzzleString =
-	    "  0,1,1 - 1,1,0" + 
-	    "P 1,1 - 0,1 - 0,1" +
-	    "P 1,0 - 1,1 # 0,0 - 0,1" +
-	    "P 0,1 - 1,1 # 0,0 - 1,0" +
-	    "P 1,0 - 1,1 # 0,0 - 1,0" +
-	    "P 1,1,1 - 0,1,0" +
-	    "P 1,0 - 1,1";
+	    "P 0,1 - 1,1 # 0,0 - 1,0 ";	    		
 	*/	
-	
-	String[] pieceStrings = puzzleString.split("[P]+");
-	pieces = new PPiece[pieceStrings.length];
+    
+    private static boolean parsePuzzle(String fname) {
+	//	java.util.LinkedList<String> piecesStrings = new java.util.LinkedList<String>();
+	try {
+	    java.io.BufferedReader in = new java.io.BufferedReader(new java.io.FileReader(fname));
+	    //	String[] lines = pStr.split("\n");
+	    
+	    boolean gotDim = false;
+	    boolean newPiece = false;
+	    StringBuffer pStrBuf = null;
+	    String name = null;
+	    boolean doneLast = false;	    
 
-	System.out.println("Solving puzzle with "+pieces.length+" pieces");
+	    String line;
+	    //	for(String line:lines) {
+	    while((line=in.readLine()) != null || doneLast == false) {
+		if(line == null) {
+		    doneLast = true;
+		    line = "\n";
+		}
+		if(line.startsWith("//")) {
+		    //ignore comments
+		}
+		else if(!gotDim) {
+		    //first line should be dimensions
+		    String[] tmp = line.split("x");
+		    try {
+			CSIZE = Integer.parseInt(tmp[0]);
+			RSIZE = Integer.parseInt(tmp[1]);
+			LSIZE = Integer.parseInt(tmp[2]);
+		    }
+		    catch(Exception e) {
+			System.out.println("Failed to parse dimension string: "+line);
+			return false;
+		    }
+
+
+		    gotDim = true;
+		}
+		else if(line.trim().length() == 0) {
+		    //next line is a new piece
+		    if(pStrBuf != null) {
+			String piece = pStrBuf.toString();
+			//System.out.println(name+": "+piece);
+			PPiece p = new PPiece(piece, name);
+			MIN_SIZE = Math.min(p.getWeight(), MIN_SIZE);
+			pieces.add(p);	    
+			
+			pStrBuf = null;
+			name = null;
+		    }		
+		    
+		    newPiece = true;
+		    
+		}
+		else if(newPiece && name == null) {
+		    name = line.trim();
+		    pStrBuf = new StringBuffer(20);		
+		}
+		else {
+		    pStrBuf.append(line);
+		    pStrBuf.append(',');
+		}
+	    }
+	    in.close();	    
+	}
+	catch (java.io.IOException e) {
+	    System.out.println(e);
+	    return false;
+	}
+
+	System.out.println("Solving "+CSIZE+"x"+RSIZE+"x"+LSIZE+" puzzle with "+pieces.size()+" pieces");	
 	
-	int n=0;
-	for(String piece : pieceStrings) {
-	    System.out.println("Piece "+(n+1)+": "+piece);
-	    pieces[n++] = new PPiece(piece);
-    	}
-	savedBox = new int[pieces.length][CSIZE*RSIZE*LSIZE];
+	savedBox = new int[pieces.size()][CSIZE*RSIZE*LSIZE];
+	
+	return true;
     }
-
+    
+    
     public static int get(int col, int row, int layer) {
 	return box[layer*RSIZE*CSIZE + row*CSIZE + col];
     }
@@ -144,10 +121,9 @@ public class PBox {
 	box[layer*RSIZE*CSIZE + row*CSIZE + col] = value;
     }
 
-    static int isobox[] = new int[CSIZE*RSIZE*LSIZE];
-    static final int MIN_SIZE=3;
 
-    static int found;
+    static int isobox[] = new int[CSIZE*RSIZE*LSIZE];
+    static int found;    
     public static int measure(int pc, int pr, int pl) {
 	//	System.out.println(pc+","+pr+","+pl+" f="+found);
 
@@ -210,7 +186,7 @@ public class PBox {
     
 
     public static boolean placePiece(int n) {
-	PPiece p = pieces[n];
+	PPiece p = pieces.get(n);
 	if(hasIsolatedSmall()) {
 	    return false;
 	}
@@ -252,7 +228,7 @@ public class PBox {
 				}
 			    }
 			    if(!fail) {				
-				if(n == pieces.length-1) {
+				if(n == pieces.size()-1) {
 				    //complete solution!
 				    newSolution(); //post solution to be printed if unique, then search on for more solutions
 				}
@@ -298,7 +274,7 @@ public class PBox {
 		for(int layer=0 ; layer < LSIZE ; layer++) {
 		    
 		    for(int col=0 ; col < CSIZE ; col++) {
-			System.out.print(get(col, row, layer) + " ");
+			System.out.print(pieces.get(get(col, row, layer)-1).getName() + " ");
 		    }
 		    System.out.print("\t");		
 		}
@@ -308,7 +284,16 @@ public class PBox {
     }
     
     public static void main(String args[]) {
-
+	if(args.length != 1) {
+	    System.out.println("Usage: java PBox <puzzle file name>");
+	    return;	    
+	}
+	String fname = args[0];
+	if( ! parsePuzzle(fname)) {
+	    System.out.println("Failed to parse puzzle: "+fname);
+	    return;	    
+	}
+	
 	placePiece(0);
 
 	if(solutions.size() < 1) {

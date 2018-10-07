@@ -10,10 +10,14 @@ class PPiece {
 
     private int rows, cols, layers;
     private int[][][] shapeArr;
+    private int weight;
+    private String name;
        
     public int getCols() { return axisToDim(transform[0]); }
     public int getRows() { return axisToDim(transform[1]); }
     public int getLayers() { return axisToDim(transform[2]); }
+    public int getWeight() { return weight; }
+    public String getName() { return name; }
     
     private int axisToDim(int ax) {
 	switch(ax) {
@@ -199,26 +203,30 @@ class PPiece {
 	}		
     }
 
-    PPiece(String piece) {	
-	String[] layStrings = piece.split("[#]+");
-	layers = layStrings.length;
-	for(int layer=0 ; layer < layStrings.length ; layer++) {
-	    String[] rowStrings = layStrings[layer].split("[-]+");
-	    rows = rowStrings.length;
-	    for(int row=0; row < rowStrings.length ; row++) {
-		String[] colStrings = rowStrings[row].split("[,]+");
-		cols = colStrings.length;
+    PPiece(String piece, String pName) {	
+	String[] rowStrings = piece.split("[,]+");
+	rows = rowStrings.length;
+	weight = 0;
+	name = pName;
+	for(int row=0 ; row < rowStrings.length ; row++) {
+	    String[] layStrings = rowStrings[row].split("[ ]+");
+	    layers = layStrings.length;
+	    for(int lay=0; lay < layStrings.length ; lay++) {		
+		cols = layStrings[lay].length();
 		if(shapeArr == null) {
 		    shapeArr = new int[cols][rows][layers];
 		}		   
-		for(int col=0 ; col < colStrings.length ; col++) {		    		   
-		    shapeArr[col][row][layer] = Integer.parseInt(colStrings[col].trim());
+		for(int col=0 ; col < layStrings[lay].length() ; col++) {
+		    int val = Integer.parseInt(""+layStrings[lay].charAt(col)); //Integer.parseInt(colStrings[col].trim());
+		    if(val > 0) {
+			shapeArr[col][row][lay] = val;
+			weight++;
+		    }
 		}
 	    }
 	}
-	System.out.println("  dim = "+cols+","+rows+","+layers);
+	//	System.out.println("  dim = "+cols+","+rows+","+layers+"  weight="+weight);
     }
-
     
     PPiece(int p_cols, int p_rows, int p_layers, int p_shape[]) {
 	cols = p_cols;
