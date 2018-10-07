@@ -5,7 +5,7 @@ Hack to solve a wooden puzzle I got as a gift. Gave up on solving it manually an
 
 Should be straight forward to enter the pieces of any M*N*O sized puzzle and get it solved. Specify puzzle pieces as per the examples under in the puzzles directory. 
 
-##Example usage
+## Example usage
 ```
 $ java PBox puzzles/puzzle1.txt
 Solving 3x3x3 puzzle with 6 pieces
@@ -17,7 +17,7 @@ A A A 	F A C 	E E C
 $
 ```
 
-##Make CAD files
+## Make CAD files
 You can also get it to output OpenSCAD files for each piece of the puzzle if you are desiring to 3D-print it:
 ```
 $ java PBox puzzles/puzzle1.txt /tmp/puzzle1
