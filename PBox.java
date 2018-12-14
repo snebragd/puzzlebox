@@ -91,7 +91,7 @@ public class PBox {
 	System.out.println("Solving "+CSIZE+"x"+RSIZE+"x"+LSIZE+" puzzle with "+pieces.size()+" pieces");
 	if(totWeight != CSIZE*RSIZE*LSIZE) {
 	    System.out.println("Mismatching pieces! Weight is "+totWeight+" while is should be "+ CSIZE*RSIZE*LSIZE);
-	    return false;
+	    //	    return false;
 	}
 	
 	savedBox = new int[pieces.size()][CSIZE*RSIZE*LSIZE];
@@ -172,8 +172,11 @@ public class PBox {
 	return false;
     }
     
+    private static int piecesTried = 0;    
 
     public static boolean placePiece(int n) {
+	piecesTried++;
+
 	PPiece p = pieces.get(n);
 	if(hasIsolatedSmall()) {
 	    return false;
@@ -262,7 +265,8 @@ public class PBox {
 		for(int layer=0 ; layer < LSIZE ; layer++) {
 		    
 		    for(int col=0 ; col < CSIZE ; col++) {
-			System.out.print(pieces.get(get(col, row, layer)-1).getName() + " ");
+			int p = get(col, row, layer);
+			    System.out.print((p==0 ? " " : pieces.get(p-1).getName()) + " ");
 		    }
 		    System.out.print("\t");		
 		}
@@ -288,13 +292,14 @@ public class PBox {
 		for(PPiece p:pieces) {		
 		    java.io.PrintWriter cf = new java.io.PrintWriter(cadName+"_"+p.getName()+".scad");
 
-		    cf.println("size=10;");
-		    cf.println("extra=3;");
+		    cf.println("size=8;");
+		    cf.println("extra=1;");
+		    cf.println("slack=0.05;");
 		    cf.println("module chamfer() {");
 		    cf.println("    intersection() {");
-		    cf.println("        cylinder($fn=4, r=extra, h=2*extra, center=true);");
-		    cf.println("        rotate([0,90,0]) cylinder($fn=4, r=extra, h=2*extra, center=true);");
-		    cf.println("        rotate([90,0,0]) cylinder($fn=4, r=extra, h=2*extra, center=true);");
+		    cf.println("        cylinder($fn=4, r=extra-slack, h=2*extra-2*slack, center=true);");
+		    cf.println("        rotate([0,90,0]) cylinder($fn=4, r=extra-slack, h=2*extra-2*slack, center=true);");
+		    cf.println("        rotate([90,0,0]) cylinder($fn=4, r=extra-slack, h=2*extra-2*slack, center=true);");
 		    cf.println("    }");
 		    cf.println("}");
 		    cf.println("minkowski() {");
@@ -340,9 +345,11 @@ public class PBox {
 	}
 	
 	placePiece(0);
-
+	System.out.println("tried: "+piecesTried);
+	
 	if(solutions.size() < 1) {
 	    System.out.println("Failed to lay puzzle! :-(");
-	}	
+	}
+	System.exit(Math.min(solutions.size(), 255));
     }
 }
