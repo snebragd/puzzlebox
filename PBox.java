@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -288,52 +287,7 @@ public class PBox {
             String cadName = args[1];
             try {
                 for (PPiece p : pieces) {
-                    PrintWriter cf = new PrintWriter(cadName + "_" + p.getName() + ".scad");
-
-                    cf.println("size=8;");
-                    cf.println("extra=1;");
-                    cf.println("slack=0.05;");
-                    cf.println("module chamfer() {");
-                    cf.println("    intersection() {");
-                    cf.println("        cylinder($fn=4, r=extra-slack, h=2*extra-2*slack, center=true);");
-                    cf.println("        rotate([0,90,0]) cylinder($fn=4, r=extra-slack, h=2*extra-2*slack, center=true);");
-                    cf.println("        rotate([90,0,0]) cylinder($fn=4, r=extra-slack, h=2*extra-2*slack, center=true);");
-                    cf.println("    }");
-                    cf.println("}");
-                    cf.println("minkowski() {");
-                    cf.println("    union() {");
-
-                    p.rotate(0);
-                    for (int col = 0; col < p.getCols(); col++) {
-                        for (int row = 0; row < p.getRows(); row++) {
-                            for (int lay = 0; lay < p.getLayers(); lay++) {
-                                if (p.get(col, row, lay) > 0) {
-                                    cf.println("         translate([" + col + "*(size+2*extra)," + row + "*(size+2*extra)," + lay + "*(size+2*extra)]) cube([size,size,size]);");
-                                }
-                            }
-                        }
-                    }
-                    for (int col = 0; col < p.getCols(); col++) {
-                        for (int row = 0; row < p.getRows(); row++) {
-                            for (int lay = 0; lay < p.getLayers(); lay++) {
-                                if (col < (p.getCols() - 1) && p.get(col, row, lay) > 0 && p.get(col + 1, row, lay) > 0) {
-                                    cf.println("        translate([" + (col + 0.5) + "*(size+2*extra)," + row + "*(size+2*extra)," + lay + "*(size+2*extra)]) cube([size,size,size]);");
-                                }
-                                if (row < (p.getRows() - 1) && p.get(col, row, lay) > 0 && p.get(col, row + 1, lay) > 0) {
-                                    cf.println("        translate([" + col + "*(size+2*extra)," + (row + 0.5) + "*(size+2*extra)," + lay + "*(size+2*extra)]) cube([size,size,size]);");
-                                }
-                                if (lay < (p.getLayers() - 1) && p.get(col, row, lay) > 0 && p.get(col, row, lay + 1) > 0) {
-                                    cf.println("        translate([" + col + "*(size+2*extra)," + row + "*(size+2*extra)," + (lay + 0.5) + "*(size+2*extra)]) cube([size,size,size]);");
-                                }
-                            }
-                        }
-                    }
-
-                    cf.println("    }");
-                    cf.println("    chamfer();");
-                    cf.println("}");
-
-                    cf.close();
+                    PPieceWriter.writePuzzle(p, String.format("%s_%s.scad", cadName, p.getName()));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
