@@ -188,14 +188,14 @@ public class PBox {
                 for (int rAdd = 0; rAdd <= (puzzle.rSize - p.getRows()); rAdd++) {
                     for (int cAdd = 0; cAdd <= (puzzle.cSize - p.getCols()); cAdd++) {
                         boolean fail = false;
-			    /* if(n<6) {
-				for(int i=0; i<n ;i++) {
-				    System.out.print("  ");
-				}
-				tried++;
-				System.out.println(tried +"/"+ places*(n==0?1:24));
-						   
-				}*/
+                        /* if(n<6) {
+                        for(int i=0; i<n ;i++) {
+                            System.out.print("  ");
+                        }
+                        tried++;
+                        System.out.println(tried +"/"+ places*(n==0?1:24));
+
+                        }*/
 
 
                         System.arraycopy(box, 0, savedBox[n], 0, puzzle.getWeight());
