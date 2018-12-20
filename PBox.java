@@ -1,4 +1,9 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class PBox {
@@ -20,7 +25,7 @@ public class PBox {
         int totWeight = 0;
 
         try {
-            java.io.BufferedReader in = new java.io.BufferedReader(new java.io.FileReader(fname));
+            BufferedReader in = new BufferedReader(new FileReader(fname));
 
             boolean gotDim = false;
             boolean newPiece = false;
@@ -77,7 +82,7 @@ public class PBox {
                 }
             }
             in.close();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -239,7 +244,7 @@ public class PBox {
 
 
         for (int[] sol : solutions) {
-            if (java.util.Arrays.equals(box, sol)) {
+            if (Arrays.equals(box, sol)) {
                 found = true;
                 break;
             }
@@ -283,7 +288,7 @@ public class PBox {
             String cadName = args[1];
             try {
                 for (PPiece p : pieces) {
-                    java.io.PrintWriter cf = new java.io.PrintWriter(cadName + "_" + p.getName() + ".scad");
+                    PrintWriter cf = new PrintWriter(cadName + "_" + p.getName() + ".scad");
 
                     cf.println("size=8;");
                     cf.println("extra=1;");
@@ -330,7 +335,7 @@ public class PBox {
 
                     cf.close();
                 }
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
