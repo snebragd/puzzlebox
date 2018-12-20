@@ -5,14 +5,14 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class PBox {
-    private static int[] box;
-    private static int[][] savedBox;
+    private int[] box;
+    private int[][] savedBox;
 
-    private static Puzzle puzzle;
+    private Puzzle puzzle;
 
-    private static LinkedList<int[]> solutions = new LinkedList<>();
+    private final LinkedList<int[]> solutions = new LinkedList<>();
 
-    private static boolean parsePuzzle(String fname) {
+    private boolean parsePuzzle(String fname) {
         puzzle = new Puzzle();
 
         int totalPieceWeight = 0;
@@ -92,21 +92,21 @@ public class PBox {
         return true;
     }
 
-    private static int index(int col, int row, int layer) {
+    private int index(int col, int row, int layer) {
         return layer * puzzle.rSize * puzzle.cSize + row * puzzle.cSize + col;
     }
 
-    private static int get(int col, int row, int layer) {
+    private int get(int col, int row, int layer) {
         return box[index(col, row, layer)];
     }
 
-    private static void set(int col, int row, int layer, int value) {
+    private void set(int col, int row, int layer, int value) {
         box[index(col, row, layer)] = value;
     }
 
-    private static int found;
+    private int found;
 
-    private static int measure(int[] isobox, int pc, int pr, int pl) {
+    private int measure(int[] isobox, int pc, int pr, int pl) {
         //	System.out.println(pc+","+pr+","+pl+" f="+found);
 
         if ((pc + 1) < puzzle.cSize && isobox[index(pc + 1, pr, pl)] == 0) {
@@ -145,7 +145,7 @@ public class PBox {
         return found;
     }
 
-    private static boolean hasIsolatedSmall() {
+    private boolean hasIsolatedSmall() {
         int[] isobox = new int[puzzle.getWeight()];
 
         System.arraycopy(box, 0, isobox, 0, puzzle.getWeight());
@@ -168,9 +168,9 @@ public class PBox {
         return false;
     }
 
-    private static int piecesTried = 0;
+    private int piecesTried = 0;
 
-    private static boolean placePiece(int n) {
+    private boolean placePiece(int n) {
         piecesTried++;
 
         PPiece p = puzzle.pieces.get(n);
@@ -235,7 +235,7 @@ public class PBox {
         return false;
     }
 
-    private static void newSolution() {
+    private void newSolution() {
         boolean found = false;
 
         for (int[] sol : solutions) {
@@ -274,8 +274,10 @@ public class PBox {
             return;
         }
 
+        PBox box = new PBox();
+
         String fname = args[0];
-        if (!parsePuzzle(fname)) {
+        if (!box.parsePuzzle(fname)) {
             System.out.println("Failed to parse puzzle: " + fname);
             return;
         }
@@ -283,7 +285,7 @@ public class PBox {
         if (args.length == 2) {
             String cadName = args[1];
             try {
-                for (PPiece p : puzzle.pieces) {
+                for (PPiece p : box.puzzle.pieces) {
                     PPieceWriter.writePuzzle(p, String.format("%s_%s.scad", cadName, p.getName()));
                 }
             } catch (IOException e) {
@@ -292,12 +294,12 @@ public class PBox {
             }
         }
 
-        placePiece(0);
-        System.out.println("tried: " + piecesTried);
+        box.placePiece(0);
+        System.out.println("tried: " + box.piecesTried);
 
-        if (solutions.size() < 1) {
+        if (box.solutions.size() < 1) {
             System.out.println("Failed to lay puzzle! :-(");
         }
-        System.exit(Math.min(solutions.size(), 255));
+        System.exit(Math.min(box.solutions.size(), 255));
     }
 }
