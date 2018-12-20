@@ -13,23 +13,23 @@ class PPiece {
     private int weight;
     private String name;
 
-    public int getCols() {
+    int getCols() {
         return axisToDim(transform[0]);
     }
 
-    public int getRows() {
+    int getRows() {
         return axisToDim(transform[1]);
     }
 
-    public int getLayers() {
+    int getLayers() {
         return axisToDim(transform[2]);
     }
 
-    public int getWeight() {
+    int getWeight() {
         return weight;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
@@ -46,7 +46,7 @@ class PPiece {
         }
     }
 
-    public int get(int col, int row, int lay) {
+    int get(int col, int row, int lay) {
         int iCol = getCols() - col - 1;
         int iRow = getRows() - row - 1;
         int iLay = getLayers() - lay - 1;

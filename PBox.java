@@ -7,14 +7,14 @@ public class PBox {
     private static int LSIZE = 0;
 
 
-    static int[] box;
-    static int[][] savedBox;
+    private static int[] box;
+    private static int[][] savedBox;
 
-    static ArrayList<PPiece> pieces = new ArrayList<PPiece>();
+    private static ArrayList<PPiece> pieces = new ArrayList<>();
 
-    static LinkedList<int[]> solutions = new LinkedList<int[]>();
+    private static LinkedList<int[]> solutions = new LinkedList<>();
 
-    static int MIN_SIZE = 100;
+    private static int MIN_SIZE = 100;
 
     private static boolean parsePuzzle(String fname) {
         int totWeight = 0;
@@ -30,7 +30,7 @@ public class PBox {
 
             String line;
             //	for(String line:lines) {
-            while ((line = in.readLine()) != null || doneLast == false) {
+            while ((line = in.readLine()) != null || !doneLast) {
                 if (line == null) {
                     doneLast = true;
                     line = "\n";
@@ -71,14 +71,14 @@ public class PBox {
                 } else if (newPiece && name == null) {
                     name = line.trim();
                     pStrBuf = new StringBuffer(20);
-                } else {
+                } else if (pStrBuf != null) {
                     pStrBuf.append(line);
                     pStrBuf.append(',');
                 }
             }
             in.close();
         } catch (java.io.IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
             return false;
         }
 
@@ -95,19 +95,19 @@ public class PBox {
     }
 
 
-    public static int get(int col, int row, int layer) {
+    private static int get(int col, int row, int layer) {
         return box[layer * RSIZE * CSIZE + row * CSIZE + col];
     }
 
-    public static void set(int col, int row, int layer, int value) {
+    private static void set(int col, int row, int layer, int value) {
         box[layer * RSIZE * CSIZE + row * CSIZE + col] = value;
     }
 
 
-    static int[] isobox;
-    static int found;
+    private static int[] isobox;
+    private static int found;
 
-    public static int measure(int pc, int pr, int pl) {
+    private static int measure(int pc, int pr, int pl) {
         //	System.out.println(pc+","+pr+","+pl+" f="+found);
 
         if ((pc + 1) < CSIZE && isobox[pl * RSIZE * CSIZE + pr * CSIZE + (pc + 1)] == 0) {
@@ -146,7 +146,7 @@ public class PBox {
         return found;
     }
 
-    public static boolean hasIsolatedSmall() {
+    private static boolean hasIsolatedSmall() {
         System.arraycopy(box, 0, isobox, 0, LSIZE * RSIZE * CSIZE);
 
         for (int l = 0; l < LSIZE; l++) {
@@ -169,7 +169,7 @@ public class PBox {
 
     private static int piecesTried = 0;
 
-    public static boolean placePiece(int n) {
+    private static boolean placePiece(int n) {
         piecesTried++;
 
         PPiece p = pieces.get(n);
@@ -331,7 +331,7 @@ public class PBox {
                     cf.close();
                 }
             } catch (java.io.IOException e) {
-                System.out.println(e);
+                e.printStackTrace();
                 return;
             }
         }
