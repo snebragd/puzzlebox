@@ -87,7 +87,6 @@ public class PBox {
         }
 
         savedBox = new int[puzzle.pieces.size()][puzzle.getWeight()];
-        isobox = new int[puzzle.getWeight()];
         box = new int[puzzle.getWeight()];
 
         return true;
@@ -105,50 +104,50 @@ public class PBox {
         box[index(col, row, layer)] = value;
     }
 
-
-    private static int[] isobox;
     private static int found;
 
-    private static int measure(int pc, int pr, int pl) {
+    private static int measure(int[] isobox, int pc, int pr, int pl) {
         //	System.out.println(pc+","+pr+","+pl+" f="+found);
 
         if ((pc + 1) < puzzle.cSize && isobox[index(pc + 1, pr, pl)] == 0) {
             found++;
             isobox[index(pc + 1, pr, pl)] = 1; //mark
-            measure(pc + 1, pr, pl);
+            measure(isobox, pc + 1, pr, pl);
         }
         if ((pc - 1) >= 0 && isobox[index(pc - 1, pr, pl)] == 0) {
             found++;
             isobox[index(pc - 1, pr, pl)] = 1; //mark
-            measure(pc - 1, pr, pl);
+            measure(isobox, pc - 1, pr, pl);
         }
 
         if ((pr + 1) < puzzle.rSize && isobox[index(pc, pr + 1, pl)] == 0) {
             found++;
             isobox[index(pc, pr + 1, pl)] = 1; //mark
-            measure(pc, pr + 1, pl);
+            measure(isobox, pc, pr + 1, pl);
         }
         if ((pr - 1) >= 0 && isobox[index(pc, pr - 1, pl)] == 0) {
             found++;
             isobox[index(pc, pr - 1, pl)] = 1; //mark
-            measure(pc, pr - 1, pl);
+            measure(isobox, pc, pr - 1, pl);
         }
 
         if ((pl + 1) < puzzle.lSize && isobox[index(pc, pr, pl + 1)] == 0) {
             found++;
             isobox[index(pc, pr, pl + 1)] = 1; //mark
-            measure(pc, pr, pl + 1);
+            measure(isobox, pc, pr, pl + 1);
         }
         if ((pl - 1) >= 0 && isobox[index(pc, pr, pl - 1)] == 0) {
             found++;
             isobox[index(pc, pr, pl - 1)] = 1; //mark
-            measure(pc, pr, pl - 1);
+            measure(isobox, pc, pr, pl - 1);
         }
 
         return found;
     }
 
     private static boolean hasIsolatedSmall() {
+        int[] isobox = new int[puzzle.getWeight()];
+
         System.arraycopy(box, 0, isobox, 0, puzzle.getWeight());
 
         for (int l = 0; l < puzzle.lSize; l++) {
@@ -158,7 +157,7 @@ public class PBox {
                         //hole, check size
                         found = 1;
                         isobox[index(c, r, l)] = 1; //mark
-                        if (measure(c, r, l) < puzzle.minSize) {
+                        if (measure(isobox, c, r, l) < puzzle.minSize) {
                             return true;
                         }
                     }
@@ -274,6 +273,7 @@ public class PBox {
             System.out.println("Usage: java PBox <puzzle file name> [cad file prefix]");
             return;
         }
+
         String fname = args[0];
         if (!parsePuzzle(fname)) {
             System.out.println("Failed to parse puzzle: " + fname);
